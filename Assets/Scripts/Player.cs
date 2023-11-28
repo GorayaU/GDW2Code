@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     }
     void FixedUpdate()
     {
-        gameObject.transform.position += NewPos;
+        //gameObject.transform.position += NewPos;
         CheckGrounded();
     }
 
@@ -43,10 +43,5 @@ public class Player : MonoBehaviour
     private void CheckGrounded()
     {
         IsGrounded = Physics2D.Raycast(transform.position, Vector3.down, Depth, GroundLayers);
-    }
-
-    private void LaunchObject()
-    {
-
     }
 }
