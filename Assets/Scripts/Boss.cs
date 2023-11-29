@@ -9,6 +9,8 @@ public class Boss : MonoBehaviour
     private Rigidbody2D targetRigidbody;
     private Vector3 NewPos;
 
+    public bool inBossFight;
+
     private void Start()
     {
         targetRigidbody = Player.GetComponent<Rigidbody2D>();
@@ -17,19 +19,20 @@ public class Boss : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Get the player's position and velocity
-        Vector3 playerPosition = Player.transform.position;
-        Vector3 playerVelocity = targetRigidbody.velocity;
+        if (inBossFight)
+        {
+            // Get the player's position and velocity
+            Vector3 playerPosition = Player.transform.position;
+            Vector3 playerVelocity = targetRigidbody.velocity;
 
-        // Calculate the predicted position of the player in future time
-        Vector3 predictedPosition = PredictTargetPosition(playerPosition, playerVelocity, BulletPrefab.transform.position, launchSpeed);
+            // Calculate the predicted position of the player in future time
+            Vector3 predictedPosition = PredictTargetPosition(playerPosition, playerVelocity, BulletPrefab.transform.position, launchSpeed);
 
-        // Keep the Y position of the player but track the X position
-        Vector3 trackedPosition = new Vector3(predictedPosition.x, predictedPosition.y, 0);
+            // Keep the Y position of the player but track the X position
+            Vector3 trackedPosition = new Vector3(predictedPosition.x, predictedPosition.y, 0);
 
-        gameObject.transform.position += NewPos;
-
-        ShootBullet(trackedPosition);
+            ShootBullet(trackedPosition);
+        }
     }
 
     private Vector3 PredictTargetPosition(Vector3 targetPosition, Vector3 targetVelocity, Vector3 launchPosition, float launchSpeed)

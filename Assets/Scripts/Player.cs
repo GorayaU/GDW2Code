@@ -7,13 +7,15 @@ public class Player : MonoBehaviour
     [SerializeField] private float SpeedFactor = 5;
     [SerializeField] private float JumpForce;
     [SerializeField] private LayerMask GroundLayers;
+    [SerializeField] private Boss Boss;
 
     private Rigidbody2D Rb;
     private Collider2D MyCollider;
     private float Depth;
-
     private bool IsGrounded;
     private Vector3 NewPos;
+    private bool inFight;
+    private Vector3 moveDir;
 
     void Start()
     {
@@ -28,7 +30,11 @@ public class Player : MonoBehaviour
     }
     void FixedUpdate()
     {
-        gameObject.transform.position += NewPos;
+        if (!inFight)
+        {
+            gameObject.transform.position += NewPos;
+        }
+        transform.position += transform.rotation * (SpeedFactor * Time.deltaTime * moveDir);
         CheckGrounded();
     }
 
@@ -40,8 +46,20 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void Fly(Vector3 newDirection)
+    {
+        moveDir = newDirection;
+    }
+
     private void CheckGrounded()
     {
         IsGrounded = Physics2D.Raycast(transform.position, Vector3.down, Depth, GroundLayers);
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        inFight = !inFight;
+        Boss.inBossFight = !Boss.inBossFight;
+        ImputManager.inFight = !ImputManager.inFight;
     }
 }
