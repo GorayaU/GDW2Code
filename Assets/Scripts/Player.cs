@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float SpeedFactor = 2;
+    [SerializeField] private float SpeedFactor = 5;
     [SerializeField] private float JumpForce;
     [SerializeField] private LayerMask GroundLayers;
 
@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     }
     void FixedUpdate()
     {
-        //gameObject.transform.position += NewPos;
+        gameObject.transform.position += NewPos;
         CheckGrounded();
     }
 

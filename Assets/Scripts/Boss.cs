@@ -3,24 +3,33 @@ using UnityEngine;
 public class Boss : MonoBehaviour
 {
     [SerializeField] private GameObject Player; // The GameObject whose trajectory you want to calculate
-    [SerializeField] private GameObject Bullet; // The GameObject you want to launch
+    [SerializeField] private GameObject BulletPrefab; // The GameObject you want to launch
     [SerializeField] private float launchSpeed = 10f; // The speed at which the object will be launched
 
     private Rigidbody2D targetRigidbody;
+    private Vector3 NewPos;
 
     private void Start()
     {
         targetRigidbody = Player.GetComponent<Rigidbody2D>();
+        NewPos = Vector3.right / 5;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
+        // Get the player's position and velocity
+        Vector3 playerPosition = Player.transform.position;
+        Vector3 playerVelocity = targetRigidbody.velocity;
 
-        // Calculate the predicted position of the target object
-        Vector3 predictedPosition = PredictTargetPosition(Player.transform.position, targetRigidbody.velocity, Bullet.transform.position, launchSpeed);
+        // Calculate the predicted position of the player in future time
+        Vector3 predictedPosition = PredictTargetPosition(playerPosition, playerVelocity, BulletPrefab.transform.position, launchSpeed);
 
-        // Launch the object towards the predicted position
-        LaunchObject(predictedPosition);
+        // Keep the Y position of the player but track the X position
+        Vector3 trackedPosition = new Vector3(predictedPosition.x, predictedPosition.y, 0);
+
+        gameObject.transform.position += NewPos;
+
+        ShootBullet(trackedPosition);
     }
 
     private Vector3 PredictTargetPosition(Vector3 targetPosition, Vector3 targetVelocity, Vector3 launchPosition, float launchSpeed)
@@ -35,12 +44,16 @@ public class Boss : MonoBehaviour
         return predictedPosition;
     }
 
-    private void LaunchObject(Vector3 targetPosition)
+    private void ShootBullet(Vector3 targetPosition)
     {
-        // Calculate the direction towards the predicted position
-        Vector3 launchDirection = (targetPosition - Bullet.transform.position).normalized;
+        // Calculate the direction towards the predicted position of the player
+        Vector3 launchDirection = (targetPosition - transform.position).normalized;
 
-        // Launch the object towards the predicted position
-        Bullet.GetComponent<Rigidbody2D>().velocity = launchDirection * launchSpeed;
+        GameObject Bullet = Instantiate(BulletPrefab, transform.position, Quaternion.identity);
+
+        Rigidbody2D bulletRigidbody = Bullet.GetComponent<Rigidbody2D>();
+
+        bulletRigidbody.AddForce(launchDirection * launchSpeed, ForceMode2D.Impulse);
+        Destroy(Bullet, 3);
     }
 }
