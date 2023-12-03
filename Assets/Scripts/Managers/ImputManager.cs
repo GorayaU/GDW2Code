@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ImputManager : MonoBehaviour
 {
@@ -21,7 +18,7 @@ public class ImputManager : MonoBehaviour
         {
             if (inFight)
             {
-                MyPlayer.Fly(ctx.ReadValue<Vector3>());
+                MyPlayer.Fly();
             }
         };
     }

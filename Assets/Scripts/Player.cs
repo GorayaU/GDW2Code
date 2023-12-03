@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -10,12 +8,10 @@ public class Player : MonoBehaviour
     [SerializeField] private Boss Boss;
 
     private Rigidbody2D Rb;
-    private Collider2D MyCollider;
     private float Depth;
     private bool IsGrounded;
     private Vector3 NewPos;
     private bool inFight;
-    private Vector3 moveDir;
 
     void Start()
     {
@@ -23,32 +19,36 @@ public class Player : MonoBehaviour
         ImputManager.GameMode();
 
         Rb = GetComponent<Rigidbody2D>();
-        MyCollider = GetComponent<Collider2D>();
         Depth = GetComponent<Collider2D>().bounds.size.y;
 
-        NewPos = Vector3.right/SpeedFactor;
+        NewPos = Vector3.right / SpeedFactor;
     }
     void FixedUpdate()
     {
         if (!inFight)
         {
-            gameObject.transform.position += NewPos;
+            transform.position += NewPos;
         }
-        transform.position += transform.rotation * (SpeedFactor * Time.deltaTime * moveDir);
         CheckGrounded();
     }
-
     public void Jump()
     {
         if (IsGrounded)
         {
-            Rb.AddForce(Vector2.up * JumpForce, ForceMode2D.Impulse);
+            Rb.AddForce(Vector3.up * JumpForce, ForceMode2D.Impulse);
         }
     }
-
-    public void Fly(Vector3 newDirection)
+    public void Fly()
     {
-        moveDir = newDirection;
+        if (Input.GetMouseButtonDown(0))
+        {
+            Rb.gravityScale = 0;
+            Rb.AddForce(Vector2.up * JumpForce, ForceMode2D.Impulse);
+        }
+        else
+        {
+            Rb.gravityScale = 1;
+        }
     }
 
     private void CheckGrounded()
@@ -58,8 +58,41 @@ public class Player : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        inFight = !inFight;
-        Boss.inBossFight = !Boss.inBossFight;
-        ImputManager.inFight = !ImputManager.inFight;
+        if (collision.transform.CompareTag("Enter Fight"))
+        {
+            inFight = !inFight;
+            Boss.inBossFight = !Boss.inBossFight;
+            ImputManager.inFight = !ImputManager.inFight;
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.transform.CompareTag("Side Block"))
+        {
+            DetachChild();
+            Destroy(gameObject);
+        }
+    }
+    public void DetachChild()
+    {
+        if (transform.childCount > 0)
+        {
+            // Create a temporary list to store children
+            Transform[] children = new Transform[transform.childCount];
+            int i = 0;
+
+            // Store children in the list
+            foreach (Transform child in transform)
+            {
+                children[i] = child;
+                i++;
+            }
+
+            // Detach children from the parent
+            foreach (Transform child in children)
+            {
+                child.parent = null;
+            }
+        }
     }
 }
