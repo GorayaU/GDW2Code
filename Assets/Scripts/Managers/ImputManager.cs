@@ -9,17 +9,11 @@ public class ImputManager : MonoBehaviour
     {
         _controls.Game.Jump.performed += ctx =>
         {
-            if (!inFight)
-            {
-                MyPlayer.Jump();
-            }
+            MyPlayer.Jump();
         };
         _controls.Game.Fly.performed += ctx =>
         {
-            if (inFight)
-            {
-                MyPlayer.Fly();
-            }
+            MyPlayer.Fly();
         };
     }
 

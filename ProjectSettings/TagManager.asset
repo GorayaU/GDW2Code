@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Enter Fight
   - Side Block
+  - bullets
+  - Boss
   layers:
   - Default
   - TransparentFX
